@@ -1,14 +1,15 @@
 package com.yoonihou.springbootmall.controller;
 
 
+import com.yoonihou.springbootmall.dto.ProductRequest;
 import com.yoonihou.springbootmall.model.Product;
 import com.yoonihou.springbootmall.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 public class ProductController {
@@ -25,5 +26,12 @@ public class ProductController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+    @PostMapping("/products")
+    public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest){
+        Integer productId = productService.createProduct(productRequest);
+
+        Product product = productService.getProductById(productId);
+        return  ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 }
