@@ -1,5 +1,6 @@
 package com.yoonihou.springbootmall.service.impl;
 
+import com.yoonihou.springbootmall.constant.ProductCategory;
 import com.yoonihou.springbootmall.dao.ProductDao;
 import com.yoonihou.springbootmall.dto.ProductRequest;
 import com.yoonihou.springbootmall.model.Product;
@@ -13,8 +14,8 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     @Override
-    public List<Product> getProducts() {
-        return productDao.getProducts();
+    public List<Product> getProducts(ProductCategory category, String search) {
+        return productDao.getProducts(category, search);
     }
 
     @Autowired

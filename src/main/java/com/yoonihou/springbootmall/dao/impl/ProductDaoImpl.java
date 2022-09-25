@@ -1,5 +1,6 @@
 package com.yoonihou.springbootmall.dao.impl;
 
+import com.yoonihou.springbootmall.constant.ProductCategory;
 import com.yoonihou.springbootmall.dao.ProductDao;
 import com.yoonihou.springbootmall.dto.ProductRequest;
 import com.yoonihou.springbootmall.model.Product;
@@ -24,11 +25,21 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public List<Product> getProducts() {
+    public List<Product> getProducts(ProductCategory category, String search) {
         String sql =  "SELECT product_id, product_name, " +
                 "category, image_url, price, stock, " +
-                "description, created_date, last_modified_date FROM product";
+                "description, created_date, last_modified_date FROM product WHERE 1=1";
         Map<String, Object> map = new HashMap<>();
+
+        if(category != null){
+            sql = sql + " AND category = :category"; //前面要預留空白鍵 語句才不會連再一起
+            map.put("category", category.name()); //因為category 是enum類型 要轉換成字串 使用.name()
+        }
+
+        if(search != null){
+            sql = sql + " AND product_name LIKE :search"; //前面要預留空白鍵 語句才不會連再一起
+            map.put("search", "%" + search + "%");
+        }
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map,  new ProductRowMapper());
 
