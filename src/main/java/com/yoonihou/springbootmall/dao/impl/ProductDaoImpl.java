@@ -32,6 +32,7 @@ public class ProductDaoImpl implements ProductDao {
                 "description, created_date, last_modified_date FROM product WHERE 1=1";
         Map<String, Object> map = new HashMap<>();
 
+        //查詢條件
         if(productQueryParams.getCategory() != null){
             sql = sql + " AND category = :category"; //前面要預留空白鍵 語句才不會連再一起
             map.put("category", productQueryParams.getCategory().name()); //因為category 是enum類型 要轉換成字串 使用.name()
@@ -42,8 +43,15 @@ public class ProductDaoImpl implements ProductDao {
             map.put("search", "%" + productQueryParams.getSearch() + "%");
         }
 
+        //排序
         sql = sql + " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort(); //ORDER BY 只能用字串拼接方式
-        List<Product> productList = namedParameterJdbcTemplate.query(sql, map,  new ProductRowMapper());
+
+        //分頁
+        sql = sql + " LIMIT :limit OFFSET :offset ";
+        map.put("limit", productQueryParams.getLimit());
+        map.put("offset", productQueryParams.getOffset())
+
+;        List<Product> productList = namedParameterJdbcTemplate.query(sql, map,  new ProductRowMapper());
 
         return  productList;
     }
